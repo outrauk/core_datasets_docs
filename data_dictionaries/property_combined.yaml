@@ -1,0 +1,742 @@
+version: 2
+
+models:
+  - name: property_combined
+    description: >
+      The table contains attributes of each property, including some geographical information, but mainly physical
+      characteristics.
+      Each record represents a single property, and it has coverage for more than 30 million residential UPRNS across
+      the mainland UK (England, Wales, Scotland).
+      It is made of actual values (from sources listed below) and predicted values powered by AI .
+
+    config:
+      tags: ["core", "property"]
+      persist_docs:
+        relation: true
+        columns: true
+      contract:
+        enforced: true
+
+    meta:
+      owner: mcosta
+      domain: property
+      contains_pii: false
+
+    columns:
+
+      - name: OUTRA_BATCH
+        description: "Batch timestamp of model execution."
+        data_type: timestamp
+        tests:
+          - not_null
+
+      - name: UPRN
+        description: "Unique Property Reference Number."
+        data_type: number
+        tests:
+          - not_null
+          - unique
+
+      - name: LOAD_DATETIME
+        description: "Datetime when the record was loaded."
+        data_type: timestamp
+
+      - name: LIVE
+        description: "Whether the property is live in the dataset."
+        data_type: boolean
+
+      - name: X_COORDINATE
+        description: "OSGB easting coordinate."
+        data_type: float
+
+      - name: Y_COORDINATE
+        description: "OSGB northing coordinate."
+        data_type: float
+
+      - name: LATITUDE
+        description: "Latitude of the property centroid."
+        data_type: float
+
+      - name: LONGITUDE
+        description: "Longitude of the property centroid."
+        data_type: float
+
+      - name: UDPRN
+        description: "Unique Delivery Point Reference Number."
+        data_type: numeric
+
+      - name: SUB_BUILDING_NAME
+        description: "Sub‑building name."
+        data_type: varchar
+
+      - name: BUILDING_NAME
+        description: "Building name."
+        data_type: varchar
+
+      - name: BUILDING_NUMBER
+        description: "Property building number."
+        data_type: varchar
+
+      - name: DEPENDENT_THOROUGHFARE
+        description: "Dependent thoroughfare."
+        data_type: varchar
+
+      - name: THOROUGHFARE
+        description: "Primary road/street."
+        data_type: varchar
+
+      - name: DOUBLE_DEPENDENT_LOCALITY
+        description: "Double dependent locality."
+        data_type: varchar
+
+      - name: DEPENDENT_LOCALITY
+        description: "Dependent locality."
+        data_type: varchar
+
+      - name: POST_TOWN
+        description: "Post town."
+        data_type: varchar
+
+      - name: POSTCODE
+        description: "Full property postcode."
+        data_type: varchar
+
+      # -----------------------------
+      # PROPERTY ATTRIBUTES
+      # -----------------------------
+      - name: KITCHENS
+        description: "Number of kitchens."
+        data_type: numeric
+        tests:
+          - accepted_values:
+              values: [ "1", "2", "3" ]
+
+      - name: BATHROOMS
+        description: "Number of bathrooms."
+        data_type: numeric
+        tests:
+          - accepted_values:
+              values: [ "1", "2", "3", "4", "5", "6", "7" ]
+
+      - name: BATHROOMS$MODELLED
+        description: "Flag indicating if bathrooms count is modelled."
+        data_type: boolean
+
+      - name: BATHROOMS$CONFIDENCE
+        description: "Model confidence for bathrooms count."
+        data_type: float
+
+      - name: BATHROOMS$PREDICTION_DATE
+        description: "Prediction timestamp for bathrooms model."
+        data_type: timestamp
+
+      - name: BEDROOMS
+        description: "Number of bedrooms."
+        data_type: numeric
+        tests:
+          - accepted_values:
+              values: [ "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" ]
+
+      - name: BEDROOMS$MODELLED
+        description: "Flag indicating if bedroom count is modelled."
+        data_type: boolean
+
+      - name: BEDROOMS$CONFIDENCE
+        description: "Model confidence for bedroom count."
+        data_type: float
+
+      - name: BEDROOMS$PREDICTION_DATE
+        description: "Prediction timestamp for bedroom model."
+        data_type: timestamp
+
+      - name: YEAR_BUILT
+        description: "Property year built."
+        data_type: numeric
+
+      - name: YEAR_BUILT$MODELLED
+        description: "Flag: year built is modelled."
+        data_type: boolean
+
+      - name: YEAR_BUILT$CONFIDENCE
+        description: "Model confidence for year built."
+        data_type: float
+
+      - name: YEAR_BUILT$PREDICTION_DATE
+        description: "Timestamp of modelling year built."
+        data_type: timestamp
+
+      - name: NEW_BUILD_FLAG
+        description: "Indicates if property is a new build."
+        data_type: boolean
+
+      - name: NEW_BUILD_FLAG$MODELLED
+        description: "Flag indicating whether NEW_BUILD_FLAG was modelled."
+        data_type: boolean
+
+      - name: NEW_BUILD_FLAG$PREDICTION_DATE
+        description: "Prediction date for NEW_BUILD_FLAG."
+        data_type: timestamp
+
+      - name: SOCIAL_HOUSING_FLAG
+        description: "Indicates if property is social housing."
+        data_type: boolean
+
+      - name: SOCIAL_HOUSING_FLAG$MODELLED
+        description: "Whether social housing flag is modelled."
+        data_type: boolean
+
+      - name: SOCIAL_HOUSING_FLAG$CONFIDENCE
+        description: "Confidence for social housing classification."
+        data_type: float
+
+      - name: SOCIAL_HOUSING_FLAG$PREDICTION_DATE
+        description: "Prediction date for social housing model."
+        data_type: timestamp
+
+      - name: FLOOR_AREA
+        description: "Floor area of property."
+        data_type: float
+
+      - name: FLOOR_AREA$MODELLED
+        description: "Flag: floor area modelled."
+        data_type: boolean
+
+      - name: FLOOR_AREA$CONFIDENCE
+        description: "Model confidence for floor area."
+        data_type: float
+
+      - name: FLOOR_AREA$PREDICTION_DATE
+        description: "Prediction date for floor area model."
+        data_type: timestamp
+
+      - name: RECEPTIONS
+        description: "Number of receptions."
+        data_type: numeric
+        tests:
+          - accepted_values:
+              values: [ "0", "1", "2", "3", "4", "5", "6", "7" ]
+
+      - name: RECEPTIONS$MODELLED
+        description: "Whether receptions count was modelled."
+        data_type: boolean
+
+      - name: RECEPTIONS$CONFIDENCE
+        description: "Model confidence for receptions."
+        data_type: float
+
+      - name: RECEPTIONS$PREDICTION_DATE
+        description: "Prediction date for receptions model."
+        data_type: timestamp
+
+      - name: NUMBER_HABITABLE_ROOMS
+        description: "Total number of habitable rooms."
+        data_type: numeric
+
+      - name: NUMBER_HABITABLE_ROOMS$MODELLED
+        description: "Flag: habitable rooms value is modelled."
+        data_type: boolean
+
+      - name: NUMBER_HABITABLE_ROOMS$CONFIDENCE
+        description: "Model confidence for habitable rooms."
+        data_type: float
+
+      - name: NUMBER_HABITABLE_ROOMS$PREDICTION_DATE
+        description: "Prediction date for habitable rooms model."
+        data_type: timestamp
+
+      - name: NUMBER_OF_FLOORS
+        description: "Number of floors in the property."
+        data_type: numeric
+        tests:
+          - accepted_values:
+              values: [ "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" ]
+
+      - name: NUMBER_OF_FLOORS$MODELLED
+        description: "Flag indicating if floor count is modelled."
+        data_type: boolean
+
+      - name: NUMBER_OF_FLOORS$CONFIDENCE
+        description: "Confidence for floors count."
+        data_type: float
+
+      - name: NUMBER_OF_FLOORS$PREDICTION_DATE
+        description: "Prediction date for floors model."
+        data_type: timestamp
+
+      - name: OCCUPANT_TYPE
+        description: "Predicted occupant type."
+        data_type: varchar
+
+      - name: OCCUPANT_TYPE$MODELLED
+        description: "Flag: occupant type was modelled."
+        data_type: boolean
+
+      - name: OCCUPANT_TYPE$CONFIDENCE
+        description: "Confidence for occupant type model."
+        data_type: float
+
+      - name: OCCUPANT_TYPE$PREDICTION_DATE
+        description: "Prediction date for occupant type model."
+        data_type: timestamp
+
+      - name: PROPERTY_RENTAL_VALUE
+        description: "Estimated rental value."
+        data_type: float
+
+      - name: PROPERTY_RENTAL_VALUE$MODELLED
+        description: "Flag: rental value is modelled."
+        data_type: boolean
+
+      - name: PROPERTY_RENTAL_VALUE$CONFIDENCE
+        description: "Rental value model confidence."
+        data_type: float
+
+      - name: PROPERTY_RENTAL_VALUE$PREDICTION_DATE
+        description: "Prediction timestamp for rental value."
+        data_type: timestamp
+
+      - name: PROPERTY_STYLE
+        description: "Property style classification."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [ "Terraced", "Purpose Built", "Detached", "Semi-Detached", "Mid-Terrace", "End-Terrace", "Converted", "Park Home" ]
+
+      - name: PROPERTY_STYLE$MODELLED
+        description: "Flag: property style is modelled."
+        data_type: boolean
+
+      - name: PROPERTY_STYLE$CONFIDENCE
+        description: "Model confidence for property style."
+        data_type: float
+
+      - name: PROPERTY_STYLE$PREDICTION_DATE
+        description: "Prediction date for property style."
+        data_type: timestamp
+
+      - name: PROPERTY_TYPE
+        description: "Property type classification."
+        data_type: varchar
+
+      - name: PROPERTY_TYPE$MODELLED
+        description: "Flag: property type is modelled."
+        data_type: boolean
+
+      - name: PROPERTY_TYPE$CONFIDENCE
+        description: "Confidence for property type model."
+        data_type: float
+
+      - name: PROPERTY_TYPE$PREDICTION_DATE
+        description: "Prediction date for property type."
+        data_type: timestamp
+
+      - name: PROPERTY_VALUE
+        description: "Estimated property value."
+        data_type: float
+
+      - name: PROPERTY_VALUE$MODELLED
+        description: "Flag indicating if property value is modelled."
+        data_type: boolean
+
+      - name: PROPERTY_VALUE$CONFIDENCE
+        description: "Model confidence for property value."
+        data_type: float
+
+      - name: PROPERTY_VALUE$PREDICTION_DATE
+        description: "Prediction date for property value."
+        data_type: timestamp
+
+      - name: TENURE
+        description: "Property tenure classification."
+        data_type: varchar
+
+      - name: TENURE$MODELLED
+        description: "Flag: tenure is modelled."
+        data_type: boolean
+
+      - name: TENURE$CONFIDENCE
+        description: "Confidence for tenure model."
+        data_type: float
+
+      - name: TENURE$PREDICTION_DATE
+        description: "Prediction date for tenure."
+        data_type: timestamp
+
+      - name: GARAGE
+        description: "Whether property has a garage."
+        data_type: boolean
+
+      - name: GARAGE$MODELLED
+        description: "Garage model flag."
+        data_type: boolean
+
+      - name: GARAGE$CONFIDENCE
+        description: "Garage model confidence."
+        data_type: float
+
+      - name: GARAGE$PREDICTION_DATE
+        description: "Prediction date for garage model."
+        data_type: timestamp
+
+      - name: GARAGE_SIZE
+        description: "Garage size classification."
+        data_type: varchar
+
+      - name: GARAGE_SIZE$MODELLED
+        description: "Flag: garage size is modelled."
+        data_type: boolean
+
+      - name: GARAGE_SIZE$CONFIDENCE
+        description: "Garage size model confidence."
+        data_type: float
+
+      - name: GARAGE_SIZE$PREDICTION_DATE
+        description: "Prediction date for garage size."
+        data_type: timestamp
+
+      - name: PARKING
+        description: "Whether property has parking."
+        data_type: boolean
+
+      - name: PARKING$MODELLED
+        description: "Flag: parking is modelled."
+        data_type: boolean
+
+      - name: PARKING$CONFIDENCE
+        description: "Parking model confidence."
+        data_type: float
+
+      - name: PARKING$PREDICTION_DATE
+        description: "Prediction date for parking model."
+        data_type: timestamp
+
+      - name: ENTRANCE_FLOOR
+        description: "Entrance floor level."
+        data_type: varchar
+
+      - name: GARDEN_AREA
+        description: "Whether the property has a garden area."
+        data_type: boolean
+
+      - name: CONSTRUCTION_TYPE
+        description: "Construction type classification."
+        data_type: varchar
+
+      - name: BASEMENT
+        description: "Whether the property has a basement."
+        data_type: boolean
+
+      # -----------------------------
+      # EPC attributes
+      # -----------------------------
+      - name: CURRENT_ENERGY_RATING
+        description: "Current EPC energy rating."
+        data_type: varchar
+
+      - name: CURRENT_ENERGY_RATING$MODELLED
+        description: "Flag: EPC rating is modelled."
+        data_type: boolean
+
+      - name: CURRENT_ENERGY_RATING$CONFIDENCE
+        description: "Energy rating model confidence."
+        data_type: float
+
+      - name: CURRENT_ENERGY_RATING$PREDICTION_DATE
+        description: "Prediction date for EPC energy rating."
+        data_type: timestamp
+
+      - name: CURRENT_ENERGY_EFFICIENCY
+        description: "Current EPC efficiency score."
+        data_type: float
+
+      - name: ENERGY_CONSUMPTION_CURRENT
+        description: "Current energy consumption (kWh)."
+        data_type: float
+
+      - name: ENERGY_CONSUMPTION_CURRENT$MODELLED
+        description: "Flag: current energy consumption modelled."
+        data_type: boolean
+
+      - name: ENERGY_CONSUMPTION_CURRENT$CONFIDENCE
+        description: "Confidence for consumption model."
+        data_type: float
+
+      - name: ENERGY_CONSUMPTION_CURRENT$PREDICTION_DATE
+        description: "Prediction date for consumption model."
+        data_type: timestamp
+
+      - name: ENERGY_CONSUMPTION_POTENTIAL
+        description: "Potential EPC energy consumption."
+        data_type: float
+
+      - name: ENERGY_CONSUMPTION_POTENTIAL$MODELLED
+        description: "Flag: potential consumption modelled."
+        data_type: boolean
+
+      - name: ENERGY_CONSUMPTION_POTENTIAL$CONFIDENCE
+        description: "Confidence for potential consumption."
+        data_type: float
+
+      - name: ENERGY_CONSUMPTION_POTENTIAL$PREDICTION_DATE
+        description: "Prediction date for potential consumption."
+        data_type: timestamp
+
+      - name: HEATING_COST_CURRENT
+        description: "Current heating cost estimate."
+        data_type: float
+
+      - name: HEATING_COST_CURRENT$MODELLED
+        description: "Flag: heating cost modelled."
+        data_type: boolean
+
+      - name: HEATING_COST_CURRENT$CONFIDENCE
+        description: "Heating cost model confidence."
+        data_type: float
+
+      - name: HEATING_COST_CURRENT$PREDICTION_DATE
+        description: "Prediction date for heating cost model."
+        data_type: timestamp
+
+      - name: HOT_WATER_COST_CURRENT
+        description: "Current hot water cost."
+        data_type: float
+
+      - name: HOT_WATER_COST_CURRENT$MODELLED
+        description: "Flag: hot water cost modelled."
+        data_type: boolean
+
+      - name: HOT_WATER_COST_CURRENT$CONFIDENCE
+        description: "Confidence for hot water model."
+        data_type: float
+
+      - name: HOT_WATER_COST_CURRENT$PREDICTION_DATE
+        description: "Prediction date for hot water cost."
+        data_type: timestamp
+
+      - name: LIGHTING_COST_CURRENT
+        description: "Lighting cost estimate."
+        data_type: float
+
+      - name: LIGHTING_COST_CURRENT$MODELLED
+        description: "Flag: lighting cost modelled."
+        data_type: boolean
+
+      - name: LIGHTING_COST_CURRENT$CONFIDENCE
+        description: "Lighting model confidence."
+        data_type: float
+
+      - name: LIGHTING_COST_CURRENT$PREDICTION_DATE
+        description: "Prediction date for lighting model."
+        data_type: timestamp
+
+      - name: MULTI_GLAZE_PROPORTION
+        description: "Proportion of multi‑glazed windows."
+        data_type: numeric
+
+      - name: MULTI_GLAZE_PROPORTION$MODELLED
+        description: "Flag: multi‑glaze proportion modelled."
+        data_type: boolean
+
+      - name: MULTI_GLAZE_PROPORTION$CONFIDENCE
+        description: "Confidence for multi‑glaze model."
+        data_type: float
+
+      - name: MULTI_GLAZE_PROPORTION$PREDICTION_DATE
+        description: "Prediction date for multi‑glaze model."
+        data_type: timestamp
+
+      - name: WALLS_TYPE
+        description: "Type of wall construction."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [ "Cavity", "Solid Brick", "System Built", "Timber Frame", "Sandstone or Limestone", "Granite or Whinstone", "Cob", "Park Home Wall" ]
+
+      - name: WALLS_TYPE$MODELLED
+        description: "Flag: wall type modelled."
+        data_type: boolean
+
+      - name: WALLS_TYPE$CONFIDENCE
+        description: "Confidence for wall type model."
+        data_type: float
+
+      - name: WALLS_TYPE$PREDICTION_DATE
+        description: "Prediction date for wall type model."
+        data_type: timestamp
+
+      - name: WINDOWS_TYPE
+        description: "Windows type classification."
+        data_type: varchar
+
+      - name: WINDOWS_TYPE$MODELLED
+        description: "Flag: windows type modelled."
+        data_type: boolean
+
+      - name: WINDOWS_TYPE$CONFIDENCE
+        description: "Confidence for windows type model."
+        data_type: float
+
+      - name: WINDOWS_TYPE$PREDICTION_DATE
+        description: "Prediction date for windows model."
+        data_type: timestamp
+
+      - name: HEATING
+        description: "Heating system type."
+        data_type: varchar
+
+      - name: HEATING$MODELLED
+        description: "Flag: heating type modelled."
+        data_type: boolean
+
+      - name: HEATING$CONFIDENCE
+        description: "Heating model confidence."
+        data_type: float
+
+      - name: HEATING$PREDICTION_DATE
+        description: "Prediction date for heating model."
+        data_type: timestamp
+
+      - name: HEATING_TYPE
+        description: "Heating type classification."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [ "Gas", "Electricity", "Oil", "Air Heat Pump", "Solid Fuel", "Solar", "Biomass", "LPG", "Partial", "N/A" ]
+
+      - name: HEATING_TYPE$MODELLED
+        description: "Flag: heating type is modelled."
+        data_type: boolean
+
+      - name: HEATING_TYPE$CONFIDENCE
+        description: "Confidence for heating type model."
+        data_type: float
+
+      - name: HEATING_TYPE$PREDICTION_DATE
+        description: "Prediction date for heating type model."
+        data_type: timestamp
+
+      - name: NUMBER_OPEN_FIREPLACES
+        description: "Number of open fireplaces."
+        data_type: numeric
+        tests:
+          - accepted_values:
+              values: [ "0", "1", "2", "3", "4", "5", "6", "7", "8" ]
+
+      - name: NUMBER_OPEN_FIREPLACES$MODELLED
+        description: "Flag: fireplaces count is modelled."
+        data_type: boolean
+
+      - name: NUMBER_OPEN_FIREPLACES$CONFIDENCE
+        description: "Confidence for fireplace model."
+        data_type: float
+
+      - name: NUMBER_OPEN_FIREPLACES$PREDICTION_DATE
+        description: "Prediction date for fireplace model."
+        data_type: timestamp
+
+      - name: WALL_INSULATION
+        description: "Wall insulation type."
+        data_type: varchar
+
+      - name: WALL_INSULATION$MODELLED
+        description: "Flag: insulation type is modelled."
+        data_type: boolean
+
+      - name: WALL_INSULATION$CONFIDENCE
+        description: "Confidence for insulation model."
+        data_type: float
+
+      - name: WALL_INSULATION$PREDICTION_DATE
+        description: "Prediction date for insulation model."
+        data_type: timestamp
+
+      - name: PRIMARY_ROOF_TYPE
+        description: "Primary roof type."
+        data_type: varchar
+
+      - name: PRIMARY_ROOF_TYPE$MODELLED
+        description: "Flag: roof type is modelled."
+        data_type: boolean
+
+      - name: PRIMARY_ROOF_TYPE$CONFIDENCE
+        description: "Confidence for roof type model."
+        data_type: float
+
+      - name: PRIMARY_ROOF_TYPE$PREDICTION_DATE
+        description: "Prediction date for roof model."
+        data_type: timestamp
+
+      - name: PLANNING_APPROVALS_PAST_5_YEARS
+        description: "Number of planning approvals in past 5 years."
+        data_type: numeric
+
+      - name: PLANNING_APPLICATIONS_PAST_5_YEARS
+        description: "Number of planning applications in past 5 years."
+        data_type: numeric
+
+      - name: MOST_RECENT_PLANNING_APP_DATE
+        description: "Date of most recent planning application."
+        data_type: date
+
+      - name: MOST_RECENT_PLANNING_DEV_TYPE
+        description: "Most recent planning development type."
+        data_type: varchar
+
+      - name: MOST_RECENT_PLANNING_STAGE
+        description: "Planning stage of the most recent application."
+        data_type: varchar
+
+      - name: LISTED
+        description: "Whether the property is listed."
+        data_type: boolean
+
+      - name: LISTED$GRADE
+        description: "Listed property grade."
+        data_type: varchar
+
+      - name: LISTED_DISTANCE_METERS
+        description: "Distance to nearest listed structure (m)."
+        data_type: float
+
+      - name: MOST_RECENT_PLANNING_START_DATE
+        description: "Most recent planning start date."
+        data_type: date
+
+      - name: MOST_RECENT_NEW_HOME_APPROVAL
+        description: "Most recent new home approval date."
+        data_type: date
+
+      - name: LAST_SALE_DATE
+        description: "Date of most recent sale."
+        data_type: date
+
+      - name: SALE_ANNIVERSARY
+        description: "Anniversary of last sale."
+        data_type: date
+
+      - name: LAST_SALE_PRICE
+        description: "Sale price from most recent transaction."
+        data_type: numeric
+
+      - name: REINSTATEMENT_COST_NOTIONAL
+        description: "Notional reinstatement cost."
+        data_type: numeric
+
+      - name: REINSTATEMENT_COST_NOTIONAL$CONFIDENCE
+        description: "Confidence for notional reinstatement cost model."
+        data_type: float
+
+      - name: REINSTATEMENT_COST_OUTRA
+        description: "OUTRA reinstatement cost."
+        data_type: float
+
+      - name: REINSTATEMENT_COST_OUTRA$CONFIDENCE
+        description: "Confidence for OUTRA reinstatement cost model."
+        data_type: float
+
+      - name: INSTRUCTION_TYPE
+        description: "Instruction type for property listing."
+        data_type: varchar
+        tests:
+          - accepted_values:
+              values: [ "Other", "Purchase", "Remortgage", "Further Advanced" ]
